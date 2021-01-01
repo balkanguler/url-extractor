@@ -1,0 +1,62 @@
+<html>
+
+<head>
+  <title>Extract URL from picture</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+  <style>
+    .inputfile {
+      width: 0.1px;
+      height: 0.1px;
+      opacity: 0;
+      overflow: hidden;
+      position: absolute;
+      z-index: -1;
+    }
+
+    form {
+      margin-top: 10%;
+    }
+  </style>
+  <script>
+    document.onreadystatechange = () => {
+
+      if (document.readyState === 'complete') {
+
+        let params = (new URL(document.location)).searchParams;
+        document.getElementById("message").textContent = params.get('message');
+        console.log(params.get('message'));
+      }
+    };
+
+    upload = () =>{
+      document.getElementById("message").textContent = "Uploading picture, please wait..."
+      document.getElementById('form').submit();
+    }
+
+
+  </script>
+</head>
+
+<body>
+  <form method="POST" action="/" enctype="multipart/form-data" id="form">
+    <div class="row">
+      <div class="col-xs-4 col-md-4"></div>
+      <p class="col-xs-4 col-md-6" id="message"></p>
+      <div class="col-xs-4 col-md-4"></div>
+    </div>
+    <div class="row">
+      <div class="col-xs-4 col-md-4"></div>
+      <div class="col-xs-4 col-md-6"><input type="file" class="inputfile" capture="camera" accept="image/*"
+          name="takePictureField" id="takePictureField" onChange="upload();" />
+        <label class="btn btn-primary col-md-3" for="takePictureField">Take picture</label>
+      </div>
+      <div class="col-xs-4 col-md-4"></div>
+    </div>
+  </form>
+
+</body>
+
+</html>
