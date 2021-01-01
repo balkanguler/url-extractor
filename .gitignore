@@ -105,3 +105,4 @@ dist
 
 #aws account info
 .aws_config.json
+aws_config.json
