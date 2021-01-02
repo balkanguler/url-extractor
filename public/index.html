@@ -54,7 +54,14 @@
         method: 'POST',
         body: formData
       })
-        .then(response => response.text())
+        .then(function (response) {   
+          document.getElementById("takePictureField").value = "";                   
+          if (response.ok) {
+            return response.text();
+          }
+
+            throw Error(response.statusText)
+        })
         .then(function (text) {
           clearMessages();
           setLink("Redirecting to:  ", text);
@@ -63,7 +70,6 @@
         .catch(error => {
           console.error(error);
           setMessage("Error! Please try again.");
-          setMessage(error);
         })
     }
 

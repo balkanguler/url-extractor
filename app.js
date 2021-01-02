@@ -11,7 +11,6 @@ if (process.env.CLOUD == undefined)
     AWS.config.loadFromPath("./aws_config.json");
 const rekognition = new AWS.Rekognition();
 
-
 const storage = multer.memoryStorage();
 const urlRegexExp = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s][^)]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s][^)]{2,}|www\.[a-zA-Z0-9]+\.[^\s][^)]{2,})/gi;
 const regex = new RegExp(urlRegexExp);
@@ -28,6 +27,11 @@ app.post('/upload', (req, res) => {
             }
         };
 
+        if (req.file.buffer.byteLength > 5242880){
+            console.log('Error: Image too big...')
+            return res.status(500).send('Error: Image too big...')
+        }
+        
         rekognition.detectText(params, function (err, data) {
             if (err) console.log(err, err.stack); // an error occurred
             else {
