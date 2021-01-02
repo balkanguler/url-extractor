@@ -7,7 +7,8 @@ var logger = require('morgan');
 var AWS = require("aws-sdk");
 
 var app = express();
-//AWS.config.loadFromPath("./aws_config.json");
+if (process.env.CLOUD == undefined)
+    AWS.config.loadFromPath("./aws_config.json");
 const rekognition = new AWS.Rekognition();
 
 
@@ -15,7 +16,8 @@ const storage = multer.memoryStorage();
 const urlRegexExp = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s][^)]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s][^)]{2,}|www\.[a-zA-Z0-9]+\.[^\s][^)]{2,})/gi;
 const regex = new RegExp(urlRegexExp);
 
-app.post('/', (req, res) => {
+app.post('/upload', (req, res) => {
+
     let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).single('takePictureField');
 
     upload(req, res, function (err) {
@@ -36,10 +38,10 @@ app.post('/', (req, res) => {
                         var url = matches[0];
                         if (!url.startsWith("https") && !url.startsWith("http"))
                             url = "http://" + url;
-                        return res.status(301).redirect(url);
+                        return res.send(url);
                     }
                 }
-                res.redirect("/?message=No result found! Please try again.");
+                res.status(404);
             };
         });
 

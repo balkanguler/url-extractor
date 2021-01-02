@@ -19,49 +19,89 @@
     form {
       margin-top: 10%;
     }
-  </style>
-  <script>
-    document.onreadystatechange = () => {
 
-      if (document.readyState === 'complete') {
-
-        let params = (new URL(document.location)).searchParams;
-        document.getElementById("message").textContent = params.get('message');
-        console.log(params.get('message'));
-      }
-    };
-
-    upload = () =>{
-      document.getElementById("message").textContent = "Uploading picture, please wait..."
-      document.getElementById('form').submit();
+    p,
+    a,
+    label {
+      text-align: center;
+      align-content: center;
+      margin-top: 0px;
+      margin-right: 0px;
+      margin-bottom: 10px;
+      margin-left: 0px;
     }
 
+    .center {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+  <script>
+    upload = () => {
+      setMessage("Processing, please wait..");
+      document.getElementById('form').submit();
+    }
+    uploadToApi = () => {
+      clearMessages();
+      setMessage("Processing, please wait..");
 
+      const files = document.getElementById("takePictureField").files;
+      const formData = new FormData()
+      formData.append('takePictureField', files[0])
+
+      fetch('/upload', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.text())
+        .then(function (text) {
+          clearMessages();
+          setLink("Redirecting to:  ", text);
+          window.open(text, '_blank');
+        })
+        .catch(error => {
+          console.error(error);
+          setMessage("Error! Please try again.");
+          setMessage(error);
+        })
+    }
+
+    setMessage = (msg) => {
+      document.getElementById("message").textContent = msg;
+    }
+    setLink = (text, link) => {
+      var linkElem = document.getElementById("link");
+      linkElem.href = link;
+      linkElem.textContent = link;
+      setMessage(text);
+    }
+
+    clearMessages = () => {
+      setMessage("");
+      setLink("", "");
+    }
   </script>
 </head>
 
 <body>
   <form method="POST" action="/" enctype="multipart/form-data" id="form">
     <div class="row">
-      <div class="col-xs-1 col-md-4"></div>
-      <p class="col-xs-10 col-md-3">Please position the URL to the top of the picture.</p>
-      <div class="col-xs-1 col-md-4"></div>
+      <p>Please position the URL to the top of the picture. </p>
+    </div>
+    <div class="row center">
+      <p id="message"></p>
+      <a id="link" href=""></a>
     </div>
     <div class="row">
       <div class="col-xs-4 col-md-4"></div>
-      <p class="col-xs-4 col-md-6" id="message"></p>
-      <div class="col-xs-4 col-md-4"></div>
-    </div>
-    <div class="row">
-      <div class="col-xs-4 col-md-4"></div>
-      <div class="col-xs-4 col-md-6"><input type="file" class="inputfile" capture="camera" accept="image/*"
-          name="takePictureField" id="takePictureField" onChange="upload();" />
-        <label class="btn btn-primary col-md-3" for="takePictureField">Take picture</label>
+      <div class="col-xs-4 col-md-4 center"><input type="file" class="inputfile" capture="camera" accept="image/*"
+          name="takePictureField" id="takePictureField" onChange="uploadToApi()" />
+        <label class="btn btn-primary col-md-4" for="takePictureField">Take picture</label>
       </div>
       <div class="col-xs-4 col-md-4"></div>
     </div>
   </form>
-
 </body>
 
 </html>
