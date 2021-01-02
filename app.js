@@ -8,8 +8,6 @@ var AWS = require("aws-sdk");
 
 var app = express();
 
-AWS.config.loadFromPath('./aws_config.json');
-
 const rekognition = new AWS.Rekognition();
 
 const storage = multer.memoryStorage();
